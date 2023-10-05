@@ -25,5 +25,5 @@ The project is structured as follows:
 3. Navigate to the `ansible_project` directory and execute the playbook:
 
 ```bash
-cd clam-on-satellite
+cd clamav-on-satellite6
 ansible-playbook playbooks/clamav_install.yml
