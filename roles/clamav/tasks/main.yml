@@ -1,0 +1,38 @@
+---
+  - name: Enable Codeready Builder for RHEL 8
+    ansible.builtin.command:
+      cmd: subscription-manager repos --enable codeready-builder-for-rhel-8-x86_64-rpms
+    register: codeready
+    changed_when: "'is enabled for this system' in codeready.stdout"
+
+  - name: Enable EPEL 8 Repository
+    ansible.builtin.yum_repository:
+      name: epel
+      description: EPEL 8 Repository
+      metalink: https://mirrors.fedoraproject.org/metalink?repo=epel-source-8&arch=$basearch&infra=$infra&content=$contentdir
+      enabled: yes
+      gpgcheck: yes
+
+  - name: Install ClamAV using satellite-maintain
+    ansible.builtin.shell:
+      cmd: "satellite-maintain packages install -y clamav clamav-update clamd"
+    register: clamav_install
+    changed_when: "'Procedures::Installer::Upgrade: [OK]' in clamav_install.stdout"
+
+  - name: Update Virus Definitions
+    ansible.builtin.command:
+      cmd: freshclam
+    register: virus_def
+    changed_when: "'Database updated' in virus_def.stdout" # Adjust based on actual output
+
+#  - name: Enable Codeready Builder for RHEL 8    
+#    command: subscription-manager repos --enable codeready-builder-for-rhel-8-x86_64-rpms
+#
+#  - name: Enable EPEL 8 repository
+#    command: "dnf -y --disableplugin=foreman-protector install https://dl.fedoraproject.org/pub/epel/epel-release-latest-8.noarch.rpm"
+#
+#  - name: Install ClamAV using satellite-maintain
+#    command: "satellite-maintain packages install -y clamav clamav-update clamd"
+#
+#  - name: Update Virus Definitions
+#    command: freshclam

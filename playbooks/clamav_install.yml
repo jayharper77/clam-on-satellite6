@@ -1,0 +1,7 @@
+---
+  - name: Install and Configure ClamAV on Satellite Server
+    hosts: satellite
+    become: true
+    roles:
+      - clamav
+
